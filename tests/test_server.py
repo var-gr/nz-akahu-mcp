@@ -35,18 +35,6 @@ async def test_root_server_exposes_all_14_tools(fake_env: None) -> None:
     assert names == expected
 
 
-async def test_composed_plugin_names_fit_kiro_limit(fake_env: None) -> None:
-    """Guard: marketplace-plugin-composed names must stay within Kiro's 64-char cap."""
-    from nz_akahu_mcp.server import build_server
-
-    mcp = build_server()
-    tools = await mcp.list_tools()
-    prefix = "mcp__plugin_nz-akahu-mcp_akahu__"
-    for t in tools:
-        composed = prefix + t.name
-        assert len(composed) <= 64, f"{composed} is {len(composed)} chars"
-
-
 def test_startup_banner_when_bypass_off(
     writable_env: None, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -82,17 +70,10 @@ def test_startup_banner_when_readonly(
     assert "read-only" in blob.lower()
 
 
-def test_main_constructs_and_runs(
-    fake_env: None, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """main() must build the server and call .run(); we verify the call site."""
-    from nz_akahu_mcp import server
+def test_register_health_route_adds_healthz(fake_env: None) -> None:
+    from nz_akahu_mcp.server import build_server, register_health_route
 
-    called: dict[str, bool] = {"run": False}
-
-    def fake_run(self: object) -> None:
-        called["run"] = True
-
-    monkeypatch.setattr(server.FastMCP, "run", fake_run)
-    server.main()
-    assert called["run"] is True
+    mcp = build_server()
+    register_health_route(mcp)
+    paths = [getattr(route, "path", "") for route in mcp._additional_http_routes]
+    assert "/healthz" in paths

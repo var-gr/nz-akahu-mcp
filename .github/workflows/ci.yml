@@ -1,0 +1,44 @@
+# Build, lint, and test. Docker image is built on every push/PR.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: tests + ruff + mypy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: sync deps (incl. dev)
+        run: uv sync --extra dev
+
+      - name: ruff
+        run: uv run ruff check .
+
+      - name: mypy strict
+        run: uv run mypy src
+
+      - name: pytest with 100% coverage gate
+        run: uv run pytest
+
+  docker:
+    name: docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: build image
+        run: docker build -t nz-akahu-mcp:ci .

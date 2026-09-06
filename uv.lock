@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -848,7 +848,7 @@ wheels = [
 
 [[package]]
 name = "nz-akahu-mcp"
-version = "0.1.5"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },
@@ -857,6 +857,8 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "python-dotenv" },
     { name = "sse-starlette" },
+    { name = "starlette" },
+    { name = "uvicorn" },
 ]
 
 [package.optional-dependencies]
@@ -883,6 +885,8 @@ requires-dist = [
     { name = "respx", marker = "extra == 'dev'", specifier = ">=0.21" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
     { name = "sse-starlette", specifier = "!=3.4.6" },
+    { name = "starlette", specifier = ">=0.40" },
+    { name = "uvicorn", specifier = ">=0.32" },
 ]
 provides-extras = ["dev"]
 

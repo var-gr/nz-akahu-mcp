@@ -7,7 +7,7 @@ See https://developers.akahu.nz/docs/personal-apps for the dual-header auth mode
 
 from __future__ import annotations
 
-from typing import Self
+from typing import Literal, Self
 
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -58,3 +58,32 @@ class AkahuConfig(BaseSettings):
             "Authorization": f"Bearer {self.user_token}",
             "X-Akahu-Id": self.app_token,
         }
+
+
+class HttpConfig(BaseSettings):
+    """HTTP transport and proxy-token settings. Sourced from MCP_* env vars or .env."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="MCP_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=False,
+    )
+
+    auth_token: str = Field(
+        default="",
+        description="Shared secret required on /mcp (query ?token= or Authorization: Bearer)",
+    )
+    host: str = Field(default="0.0.0.0")
+    port: int = Field(default=8080, ge=1, le=65535)
+    path: str = Field(default="/mcp")
+    transport: Literal["stdio", "http"] = Field(default="stdio")
+    allowed_hosts: str = Field(
+        default="",
+        description="Comma-separated Host allow-list. Empty disables the check.",
+    )
+    stateless: bool = Field(
+        default=False,
+        description="Stateless streamable HTTP. Set true if you run more than one replica.",
+    )

@@ -78,3 +78,37 @@ def test_bypass_env_loads(bypass_env: None) -> None:
     cfg = AkahuConfig()
     assert cfg.read_only is False
     assert cfg.automation_bypass is True
+
+
+def test_http_config_defaults(fake_env: None) -> None:
+    from nz_akahu_mcp.config import HttpConfig
+
+    cfg = HttpConfig()
+    assert cfg.auth_token == ""
+    assert cfg.host == "0.0.0.0"
+    assert cfg.port == 8080
+    assert cfg.path == "/mcp"
+    assert cfg.transport == "stdio"
+    assert cfg.allowed_hosts == ""
+    assert cfg.stateless is False
+
+
+def test_http_config_from_env(
+    monkeypatch: pytest.MonkeyPatch, fake_env: None
+) -> None:
+    from nz_akahu_mcp.config import HttpConfig
+
+    monkeypatch.setenv("MCP_AUTH_TOKEN", "a" * 40)
+    monkeypatch.setenv("MCP_HOST", "127.0.0.1")
+    monkeypatch.setenv("MCP_PORT", "9090")
+    monkeypatch.setenv("MCP_PATH", "/mcp")
+    monkeypatch.setenv("MCP_TRANSPORT", "http")
+    monkeypatch.setenv("MCP_ALLOWED_HOSTS", "api.example.com")
+    monkeypatch.setenv("MCP_STATELESS", "true")
+    cfg = HttpConfig()
+    assert cfg.auth_token == "a" * 40
+    assert cfg.host == "127.0.0.1"
+    assert cfg.port == 9090
+    assert cfg.transport == "http"
+    assert cfg.allowed_hosts == "api.example.com"
+    assert cfg.stateless is True

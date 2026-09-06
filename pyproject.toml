@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nz-akahu-mcp"
-version = "0.1.5"
-description = "Unofficial MCP server for the Akahu open-finance API (New Zealand). Personal Apps, read-by-default, write-with-consent."
+version = "0.2.0"
+description = "Unofficial MCP server for the Akahu open-finance API (New Zealand). HTTP token-gated proxy or local stdio."
 readme = "README.md"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.12"
@@ -25,6 +25,8 @@ dependencies = [
     "pydantic>=2.7",
     "pydantic-settings>=2.4",
     "python-dotenv>=1.0",
+    "starlette>=0.40",
+    "uvicorn>=0.32",
     # 3.4.6 crashes on import under Windows/Python 3.12 (regressed 2026-07-20),
     # transitive via mcp/fastmcp; pinned so every install channel skips it.
     "sse-starlette!=3.4.6",
@@ -44,10 +46,9 @@ dev = [
 nz-akahu-mcp = "nz_akahu_mcp.server:main"
 
 [project.urls]
-Homepage = "https://github.com/severity1/nz-akahu-mcp"
-Repository = "https://github.com/severity1/nz-akahu-mcp"
-Issues = "https://github.com/severity1/nz-akahu-mcp/issues"
-Changelog = "https://github.com/severity1/nz-akahu-mcp/releases"
+Homepage = "https://github.com/var-gr/nz-akahu-mcp"
+Repository = "https://github.com/var-gr/nz-akahu-mcp"
+Issues = "https://github.com/var-gr/nz-akahu-mcp/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/nz_akahu_mcp"]
